@@ -42,16 +42,34 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    Mux16 (a=x, b[0..15]=false, sel=zx, out=zeroX);
-    Not16 (in=zeroX, out=notX);
-    Mux16 (a=zeroX, b=notX, sel=nx, out=znX);
-    Mux16 (a=y, b[0..15]=false, sel=zy, out=zeroY);
-    Not16 (in=zeroY, out=notY);
-    Mux16 (a=zeroY, b=notY, sel=ny, out=znY);
-    And16 (a=znX, b=znY, out=XandY);
-    Add16 (a=znX, b=znY, out=XplusY);
-    Mux16 (a=XandY, b=XplusY, sel=f, out=fXY);
-    Not16 (in=fXY, out=NotfXY);
-    Mux16 (a=fXY, b=NotfXY, sel=no, out=out);
-
+    //zero x selector, zx
+        Mux16 (a=x, b[0..15]=false, sel=zx, out=zeroX); 
+    //negate x
+        Not16 (in=zeroX, out=notX);
+    //not x selector, nx
+        Mux16 (a=zeroX, b=notX, sel=nx, out=znX); 
+    //zero y selector, zy
+        Mux16 (a=y, b[0..15]=false, sel=zy, out=zeroY);
+    //negate y 
+        Not16 (in=zeroY, out=notY);
+    //not y selector, ny
+        Mux16 (a=zeroY, b=notY, sel=ny, out=znY); 
+    //and x and y option
+        And16 (a=znX, b=znY, out=XandY); 
+    //add x and y option
+        Add16 (a=znX, b=znY, out=XplusY); 
+    //choose add or and option f
+        Mux16 (a=XandY, b=XplusY, sel=f, out=fXY); 
+    // negate f output
+        Not16 (in=fXY, out=NotfXY);
+    // negate f output (no), break things up for or8way, and if out[15]=1 out is negative (ng selector), alu output = out
+        Mux16 (a=fXY, b=NotfXY, sel=no, out[0..7]=outlow, out[8..15]=outhigh, out[15]=ng, out=out); 
+    //checks for all zeros in first 8 bits
+        Or8Way (in=outlow, out=zrlow); 
+    //checks for all zeros in last 8 bits
+        Or8Way (in=outhigh, out=zrhigh); 
+    //compares the highs and lows for all zeros
+        Or (a=zrlow, b=zrhigh, out=notzr); 
+    //previous outputs the opposite of what is needed for zr based on or, so negate to get zr
+        Not (in=notzr, out=zr); 
 }
