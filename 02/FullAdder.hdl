@@ -13,8 +13,12 @@ CHIP FullAdder {
         carry;   // Left bit of a + b + c
 
     PARTS:
-    HalfAdder (a=a, b=b, sum=ab, carry=carryab);
-    HalfAdder (a=ab, b=c, sum=sum, carry=carryabc);
+    // full adder made up of two half adders
+    // first for sum of first two inputs and their carry
+        HalfAdder (a=a, b=b, sum=ab, carry=carryab);
+    // second for sum of first two and third, and their carry
+        HalfAdder (a=ab, b=c, sum=sum, carry=carryabc);
+    // account for both carries for accurate carry output
     Or (a=carryab, b=carryabc, out=carry);
 
 }
