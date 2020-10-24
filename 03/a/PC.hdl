@@ -16,5 +16,9 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    Inc16 (in=loopCount, out=incrementedCount);
+    Mux16 (a=loopCount, b=incrementedCount, sel=inc, out=incrementValue);
+    Mux16 (a=incrementValue, b=in, sel=load, out=loadedvalue);
+    Mux16 (a=loadedvalue, b[0..15]=false, sel=reset, out=resetValue);
+    Register (in=resetValue, load=true, out=out, out=loopCount);
 }
