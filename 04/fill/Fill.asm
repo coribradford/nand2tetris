@@ -15,7 +15,7 @@
     @SCREEN
     D=A
     @screenaddress
-    M=D             //grab first screen address and store in ram0 for easier incrementing
+    M=D             //grab first screen address and store in a temp register for easier incrementing
 
 (KEYS)
     @KBD
@@ -26,24 +26,24 @@
     D;JEQ           //if d is zero no keys are pressed, proceed to white
 
 (BLACK)
-    @instruction     //hold fill value in register 1
+    @instruction    //hold fill value in temp register
     M=-1            //determines fill val based on earlier jump condition
     @FILL
     0;JMP           //unconditionally jump to fill
 
 (WHITE)
-    @instruction    //again, holds fill value in register 1
+    @instruction    //again, holds fill value in temp register
     M=0             //determines fill val based on earlier jump condition
     @FILL
     0;JMP           //unconditionally jump to fill again
 
 (FILL)
-    @instruction    //check register 1 which is holding color instructions
+    @instruction    //check temp register which is holding color instructions
     D=M             //grab instruction and hold in d
     @screenaddress  //grab screen address
     A=M             //go there
     M=D             //fill pixel based on instruction
-    @screenaddress  //go back to register 0 holding screen address
+    @screenaddress  //go back to temp register holding screen address
     D=M+1           //increment by 1 pixel but in data register
     @KBD            //go to keyboard
     D=A-D           //store value for check for end of loop; 
