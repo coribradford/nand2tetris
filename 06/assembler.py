@@ -1,25 +1,21 @@
 
 
+import sys
+inputFileName = sys.argv[1]
 
-
-import re, sys
-inputFile = sys.argv[1]
-def assembler():
+def parser():
     command_list = []
 
-    
-    asmFile = open(inputFile + ".asm", "r")
-    hackfile = open(inputFile + ".hack", "w")
+    asmFile = open(inputFileName + ".asm", "r")
+    hackfile = open(inputFileName + ".hack", "w")
 
     for line in asmFile:
-        hackfile.write(cleanup(line))
+        cleanedLine = cleanup(line)
+        if cleanedLine != "":
+            hackfile.write(cleanedLine + "\n")
     
     asmFile.close()
     hackfile.close()
-
-
-
-
 
 
 def cleanup(fileLine):
@@ -31,4 +27,4 @@ def cleanup(fileLine):
     else:
         return firstCharacter + cleanup(fileLine[1:])
 
-assembler()
+parser()
