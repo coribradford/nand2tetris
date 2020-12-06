@@ -20,7 +20,6 @@ linenumber = 0
 variablenumber = 16
 
 def parser():
-    command_list = []
 
     asmFile = open(inputFileName + ".asm", "r")
     tempFile = open(inputFileName + ".tmp", "w")
@@ -45,27 +44,21 @@ def cleanup(fileLine):
 
 
 def firstPass(line):
-    # tempFile = open(inputFileName + ".tmp", "r")
-    # temp2File = open(inputFileName + "1.tmp", "w")
     global linenumber
-    # for line in tempFile:
     if line[0] == "(":
         label = line[1:-1]
         symbols[label] = linenumber 
-        return ""
     else:
         linenumber += 1
         return line
-    # tempFile.close()
-    # temp2File.close()
 
 
 def secondPass(line):
+    print(line)
     if line[0] == "@":
         return a_instruction(line)
     else:
-        pass
-        #return Ctranslate
+        return c_instruction(line)
 
 def a_instruction(line):
     global variablenumber
@@ -73,43 +66,31 @@ def a_instruction(line):
         label = line[1:-1]
         value = symbols.get(label, -1)
         if value == -1:
-            value = symbols[label]
-            variablenumber += 1
-        else:
-            value = int(line[1:])
+            value = a_instruction_prep(label)
+    else:
+        value = int(line[1:])
     newvalue = bin(value)[2:].zfill(16)
     return newvalue
 
+    
+
+def a_instruction_prep(label):
+    global variablenumber
+    symbols[label] = variablenumber
+    variablenumber += 1
+    return symbols[label]
+
 def c_instruction(line):
-    pass
+    line = c_instruction_prep(line)
+    return line
 
 def c_instruction_prep(line):
-    if line
+    if "=" not in line:
+        line = " ="+line
+    if ";" not in line:
+        line = line + "; "
+    return line
 
-
-# def secondPass(line):
-#     # variablenumber = 16
-#     # tempFile = open(inputFileName + "1.tmp", "r")
-#     # tempFile2 = open(inputFileName + "2.tmp", "w")
-#     # for line in tempFile:
-#     global variablenumber
-#     # if line[0] == "@":
-#     if line[1].isalpha():
-#         label = line[1:-1]
-#         print(label)
-#         value = symbols.get(label, -1)
-#         print(value)
-#         if value == -1:
-#             value = symbols[label]
-#             variablenumber += 1
-#     else:
-#         value = int((line[1:]))
-#     return value
-    # else:
-    #     return line
-        # tempFile2.write(line)
-        # tempFile.close()
-        # tempFile2.close()
 
 def performPasses():
     tempFile = open(inputFileName + ".tmp", "r")
@@ -117,7 +98,7 @@ def performPasses():
     for line in tempFile:
         firstpassLine = firstPass(line)
         secondpassLine = secondPass(firstpassLine)
-        temp2File.write(secondpassLine + "\n")
+        temp2File.write(secondpassLine)
     tempFile.close()
     temp2File.close()
 
@@ -125,5 +106,3 @@ def performPasses():
 
 parser()
 performPasses()
-# firstPass()
-# secondPass()
