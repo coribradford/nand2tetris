@@ -1,5 +1,6 @@
 
 
+
 import sys, os
 
 
@@ -38,17 +39,39 @@ linenumber = 0
 variablenumber = 16
 
 
-def parser():
+def assembler():
+    parser_and_first_pass()
+    binaryTranslation()
+
+
+def parser_and_first_pass():
     asmFile = open(inputFileName + ".asm", "r")
     tempFile = open(inputFileName + ".tmp", "w")
+    global linenumber
     for line in asmFile:
         cleanedLine = cleanup(line)
-        firstpassline = firstPass(cleanedLine)
-        if firstpassline != "":
-            tempFile.write(firstpassline + "\n")
+        if cleanedLine != "":
+            if cleanedLine[0] == "(":
+                label = cleanedLine[1:-1]
+                symbolTable[label] = linenumber
+                cleanedLine = ""
+            else:
+                linenumber += 1
+                tempFile.write(cleanedLine + "\n")
     asmFile.close()
     tempFile.close()
 
+
+def binaryTranslation():
+    tempFile = open(inputFileName + ".tmp", "r")
+    hackFile = open(inputFileName + ".hack", "w")
+    for line in tempFile:
+        secondpassLine = secondPass(line)
+        hackFile.write(secondpassLine + "\n")
+    tempFile.close()
+    os.remove(inputFileName + ".tmp")
+    hackFile.close()
+    
 
 def cleanup(fileLine):
     firstCharacter = fileLine[0]
@@ -60,17 +83,6 @@ def cleanup(fileLine):
         return firstCharacter + cleanup(fileLine[1:])
 
 
-def firstPass(line):
-    global linenumber
-    if line[0] == "(":
-        label = line[1:-1]
-        symbolTable[label] = linenumber 
-        return ""
-    else:
-        linenumber += 1
-        return line
-
-
 def secondPass(line):
     if line[0] == "@":
         return a_instruction(line)
@@ -78,8 +90,7 @@ def secondPass(line):
         return c_instruction(line)
 
 
-def a_instruction(line):
-    global variablenumber
+def a_instruction(line): 
     if line[1].isalpha():
         label = line[1:-1]
         value = symbolTable.get(label, -1)
@@ -105,7 +116,7 @@ def c_instruction(line):
     jumpSplit = destSplit[1].split(";")
     comp = compTable.get(jumpSplit[0])
     jump = jumpTable.get(jumpSplit[1])
-    c_inst = "111" + str(comp) + str(dest)+ str(jump)
+    c_inst = "111" + comp + dest + jump
     return c_inst
 
 
@@ -118,16 +129,4 @@ def c_instruction_prep(line):
     return line
 
 
-def performPasses():
-    tempFile = open(inputFileName + ".tmp", "r")
-    hackFile = open(inputFileName + ".hack", "w")
-    for line in tempFile:
-        secondpassLine = secondPass(line)
-        hackFile.write(secondpassLine + "\n")
-    tempFile.close()
-    os.remove(inputFileName + ".tmp")
-    hackFile.close()
-
-
-parser()
-performPasses()
+assembler()
