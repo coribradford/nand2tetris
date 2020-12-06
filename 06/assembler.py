@@ -51,7 +51,8 @@ def firstPass(line):
     # for line in tempFile:
     if line[0] == "(":
         label = line[1:-1]
-        symbols[label] = linenumber
+        symbols[label] = linenumber 
+        return ""
     else:
         linenumber += 1
         return line
@@ -82,7 +83,7 @@ def performPasses():
     tempFile = open(inputFileName + ".tmp", "r")
     temp2File = open(inputFileName + "1.tmp", "w")
     for line in tempFile:
-        firstPass(line)
+        line = firstPass(line)
         temp2File.write(line)
 
 
