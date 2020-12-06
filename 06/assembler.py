@@ -61,24 +61,43 @@ def firstPass(line):
 
 
 def secondPass(line):
-    # variablenumber = 16
-    # tempFile = open(inputFileName + "1.tmp", "r")
-    # tempFile2 = open(inputFileName + "2.tmp", "w")
-    # for line in tempFile:
+    if line[0] == "@":
+        return a_instruction(line)
+    else:
+        pass
+        #return Ctranslate
+
+def a_instruction(line):
     global variablenumber
-    # if line[0] == "@":
     if line[1].isalpha():
         label = line[1:-1]
-        print(label)
         value = symbols.get(label, -1)
-        print(value)
         if value == -1:
-            value = symbols[label] = variablenumber
+            value = symbols[label]
             variablenumber += 1
-    else:
-        value = int(line[1:])
-    returnvalue = "0" + bin(value)[2:].zfill(16)
-    return returnvalue
+        else:
+            value = int(line[1:])
+    newvalue = bin(value)[2:].zfill(16)
+    return newvalue
+
+# def secondPass(line):
+#     # variablenumber = 16
+#     # tempFile = open(inputFileName + "1.tmp", "r")
+#     # tempFile2 = open(inputFileName + "2.tmp", "w")
+#     # for line in tempFile:
+#     global variablenumber
+#     # if line[0] == "@":
+#     if line[1].isalpha():
+#         label = line[1:-1]
+#         print(label)
+#         value = symbols.get(label, -1)
+#         print(value)
+#         if value == -1:
+#             value = symbols[label]
+#             variablenumber += 1
+#     else:
+#         value = int((line[1:]))
+#     return value
     # else:
     #     return line
         # tempFile2.write(line)
@@ -91,7 +110,7 @@ def performPasses():
     for line in tempFile:
         firstpassLine = firstPass(line)
         secondpassLine = secondPass(firstpassLine)
-        temp2File.write(secondpassLine)
+        temp2File.write(secondpassLine + "\n")
     tempFile.close()
     temp2File.close()
 
