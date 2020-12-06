@@ -74,7 +74,6 @@ def secondPass(line):
     else:
         return c_instruction(line)
 
-
 def a_instruction(line):
     global variablenumber
     if line[1].isalpha():
@@ -94,6 +93,7 @@ def a_instruction_prep(label):
     variablenumber += 1
     return symbols[label]
 
+
 def c_instruction(line):
     line = c_instruction_prep(line)
     destSplit = line.split("=")
@@ -101,11 +101,12 @@ def c_instruction(line):
     jumpSplit = destSplit[1].split(";")
     comp = compTable.get(jumpSplit[0])
     jump = jumpTable.get(jumpSplit[1])
-    c_inst = "111" + str(dest) + str(comp) + str(jump)
+    c_inst = "111" + str(comp) + str(dest)+ str(jump)
     return c_inst
 
 
 def c_instruction_prep(line):
+    line = line[:-1]
     if "=" not in line:
         line = " ="+line
     if ";" not in line:
