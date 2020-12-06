@@ -80,6 +80,13 @@ def a_instruction(line):
     newvalue = bin(value)[2:].zfill(16)
     return newvalue
 
+def c_instruction(line):
+    pass
+
+def c_instruction_prep(line):
+    if line
+
+
 # def secondPass(line):
 #     # variablenumber = 16
 #     # tempFile = open(inputFileName + "1.tmp", "r")
