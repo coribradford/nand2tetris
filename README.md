@@ -1,3 +1,2 @@
-# This is a repository for cs271 projects
+# This is a repository for the Nand2Tetris program, projects 1-6
 ## Cori Bradford
-#### Nand2Tetris program.
